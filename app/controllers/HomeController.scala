@@ -160,4 +160,8 @@ class HomeController @Inject()(pagelets: Pagelets,
   def fallback(name: String)() = Action {
     Ok(views.html.pagelets.fallback(name, "col-md-12"))
   }
+  
+  def sample = Action {
+    Ok(play.api.libs.json.Json.toJson(models.Image.empty))
+  }
 }

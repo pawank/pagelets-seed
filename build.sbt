@@ -4,21 +4,77 @@ name := """pagelets-seed"""
 
 version := "0.1"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala).
+val scalaVer = "2.12.4"
+
+lazy val commonSettings = Seq(
+  version := "1.0",
+  scalaVersion := scalaVer,
+  scalacOptions ++= Seq(
+    "-target:jvm-1.8"
+    , "-feature"
+    , "-deprecation"
+    //, "-Xfatal-warnings"
+    , "-Xmax-classfile-name", "100"
+    , "-unchecked"
+    , "-language:implicitConversions"
+    , "-language:reflectiveCalls"
+    , "-language:postfixOps"
+    , "-language:higherKinds"
+    , "-encoding", "UTF-8"
+    , "-Yno-adapted-args"
+    , "-Xlint"
+    , "-Ywarn-numeric-widen"
+    , "-Ywarn-value-discard"
+    , "-Xfuture"
+    //    , "-Xlog-implicits"
+  ),
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint"),
+  resolvers ++= Seq(
+    Resolver.sonatypeRepo("snapshots"),"micronautics/scala on bintray" at "http://dl.bintray.com/micronautics/scala"
+  )
+)
+
+
+lazy val macrosModule = project.in(file("macros"))
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.scala-lang" % "scala-reflect",
+      "org.scala-lang" % "scala-compiler"
+    ).map(_  % scalaVer),
+    libraryDependencies ++= Seq(
+      Dependencies.Database.postgres,
+      Dependencies.Database.quillCore,
+      Dependencies.Database.quillJdbc,
+      Dependencies.Database.quillAsyncPostgresql,
+    )
+)
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala, SwaggerPlugin).
+  settings(commonSettings: _*).
   settings(Seq(
-    scalaVersion := "2.12.2",
+    scalaVersion := scalaVer,
     routesImport += "org.splink.pagelets.Binders._"),
     libraryDependencies ++= Seq(
-      ws,
-      guice,
-      "org.splink" %% "pagelets" % "0.0.7",
-      "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test,
-      "org.mockito" % "mockito-core" % "1.10.19" % Test,
-      "ch.qos.logback" % "logback-classic" % "1.1.7",
-      "org.webjars.bower" % "bootstrap" % "3.3.7",
-      "org.webjars" % "jquery" % "3.1.1"
+      "org.scala-lang" % "scala-reflect",
+      "org.scala-lang" % "scala-compiler"
+    ).map(_  % scalaVer),
+    libraryDependencies ++= Seq(
+      Dependencies.Play.ws,
+      Dependencies.Play.guice,
+      Dependencies.Web.pagelets,
+      Dependencies.Web.scalaTestplus,
+      Dependencies.Web.mockito,
+      Dependencies.Web.logback,
+      Dependencies.WebJars.bootstrap37,
+      Dependencies.WebJars.jquery,
+      Dependencies.Database.postgres,
+      Dependencies.Database.quillCore,
+      Dependencies.Database.quillJdbc,
+      Dependencies.Database.quillAsyncPostgresql,
+      Dependencies.Swagger.swagger
     )
-  )
+  )//.dependsOn(macrosModule)
 
 // to use streaming, HtmlStreamFormat is required
 TwirlKeys.templateFormats ++= Map(
@@ -46,3 +102,5 @@ includeFilter in(Assets, LessKeys.less) := "*.less"
 excludeFilter in(Assets, LessKeys.less) := "_*.less"
 
 pipelineStages in Assets := Seq(uglify)
+
+swaggerDomainNameSpaces := Seq("models")

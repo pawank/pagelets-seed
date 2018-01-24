@@ -97,3 +97,8 @@ then point your browser to [http://localhost:9000](http://localhost:9000)
 
 
 If you are interested in more details, check out the main [Play Pagelets repository](https://github.com/splink/pagelets)
+
+
+## CHANGES
+1. Added `quill` database library.  
+2. Added example how to access quill postgres async lib 

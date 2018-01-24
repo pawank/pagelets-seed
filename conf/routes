@@ -1,11 +1,17 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
+### NoDocs ###
+# https://github.com/iheartradio/play-swagger
 # Serve the home page in async mode
 GET         /                             controllers.HomeController.index
 
-# Serve a single part of the pagelet tree. For instance http://localhost:9000/pagelet/carousel
+###
+#  summary: Serve a single part of the pagelet tree. For instance http://localhost:9000/pagelet/carousel
+#  responses:
+#    200:
+#      schema:
+#        $ref: '#/definitions/models.Image'
+###
+GET         /api/v1/sample                controllers.HomeController.sample
+
 GET         /pagelet/:id                  controllers.HomeController.pagelet(id: Symbol)
 
 # Serve a resource (that is CSS or JavaScript) for a given fingerprint
@@ -29,3 +35,10 @@ GET         /assets/*file                 controllers.Assets.versioned(path="/pu
 GET         /mock/carousel                controllers.MockController.carousel
 GET         /mock/teaser/:typ             controllers.MockController.teaser(typ: String)
 GET         /mock/textblock               controllers.MockController.textblock
+
+### NoDocs ###
+GET   /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
+
+### NoDocs ###
+# swagger.json file at http://localhost:9000/assets/swagger.json
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
